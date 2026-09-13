@@ -68,7 +68,9 @@ Next.js Application (App Router)
         │  (mysql2 - SQL thuần)
         ▼
 MySQL Database
-Cấu trúc thư mục
+## Cấu trúc thư mục
+
+```
 project-root/
 ├── src/
 │   ├── app/
@@ -97,7 +99,10 @@ project-root/
 ├── Dockerfile
 ├── .env.example
 └── package.json
-Yêu cầu hệ thống
-Node.js ≥ 18
-MySQL ≥ 8.0
-Docker & Docker Compose (tùy
+```
+
+## Yêu cầu hệ thống
+
+- Node.js ≥ 18
+- MySQL ≥ 8.0
+- Docker & Docker Compose (tùy chọn, để chạy bằng container)
