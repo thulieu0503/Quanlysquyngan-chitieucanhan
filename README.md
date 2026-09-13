@@ -68,22 +68,7 @@ Next.js Application (App Router)
         │  (mysql2 - SQL thuần)
         ▼
 MySQL Database
-``` Kiến trúc hệ thống
 
-Kiến trúc 3 tầng:
-
-```
-Trình duyệt (Next.js + Tailwind CSS)
-        │
-        ▼
-Next.js Application (App Router)
- ├─ Tài khoản & Admin      → Đăng nhập, phân quyền
- ├─ Giao dịch / Category   → Thu, chi, danh mục
- └─ Budget & Dashboard     → Ngân sách, biểu đồ
-        │  (mysql2 - SQL thuần)
-        ▼
-MySQL Database
-```
 ## Cấu trúc thư mục
 
 ```
