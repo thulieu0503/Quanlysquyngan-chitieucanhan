@@ -102,9 +102,3 @@ project-root/
 ├── .env.example
 └── package.json
 ```
-
-## Yêu cầu hệ thống
-
-- Node.js ≥ 18
-- MySQL ≥ 8.0
-- Docker & Docker Compose (tùy chọn, để chạy bằng container)
