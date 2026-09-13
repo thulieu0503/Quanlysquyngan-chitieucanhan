@@ -1,4 +1,4 @@
-# Quanlysquyngan-chitieucanhan
+# Quanlyquyngan-chitieucanhan
 Ứng dụng Quản lý Thu Chi Cá Nhân
 
 Ứng dụng web giúp người dùng ghi nhận thu nhập/chi tiêu, quản lý ngân sách theo danh mục, xem báo cáo trực quan và nhận nhắc nhở chi tiêu định kỳ. Hệ thống có 2 vai trò: User (quản lý tài chính cá nhân) và Admin (quản trị người dùng và danh mục hệ thống).
