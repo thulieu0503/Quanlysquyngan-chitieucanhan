@@ -68,6 +68,7 @@ Next.js Application (App Router)
         │  (mysql2 - SQL thuần)
         ▼
 MySQL Database
+```
 
 ## Cấu trúc thư mục
 
