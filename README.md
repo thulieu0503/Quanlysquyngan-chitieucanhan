@@ -74,31 +74,61 @@ MySQL Database
 
 ```
 project-root/
-├── src/
-│   ├── app/
-│   │   ├── (auth)/          # login, register, forgot-password
-│   │   ├── (dashboard)/     # dashboard, transactions, categories, budgets, reports
-│   │   ├── admin/           # trang quản trị
-│   │   └── api/             # API routes
-│   ├── components/          # UI components dùng chung
-│   ├── lib/
-│   │   ├── db.ts            # connection pool mysql2
-│   │   ├── auth.ts          # cấu hình NextAuth
-│   │   └── validators/      # kiểm tra dữ liệu đầu vào
-│   ├── styles/
-│   └── types/
-├── sql/
-│   ├── schema.sql           # câu lệnh CREATE TABLE
-│   └── seed.ts              # script sinh dữ liệu mẫu (>= 2000 bản ghi)
-├── tests/
-│   ├── unit/
-│   └── integration/
+├── frontend/                    # Next.js (App Router, TypeScript): giao diện + API routes
+│   ├── src/
+│   │   ├── app/
+│   │   │   ├── (auth)/          # login, register, forgot-password, reset-password
+│   │   │   ├── (dashboard)/     # dashboard, transactions, categories, budgets, reports
+│   │   │   ├── admin/           # trang quản trị
+│   │   │   └── api/             # API routes
+│   │   ├── components/          # UI components dùng chung
+│   │   ├── lib/
+│   │   │   ├── db.ts            # connection pool mysql2
+│   │   │   ├── auth.ts          # cấu hình NextAuth
+│   │   │   └── validators/      # kiểm tra dữ liệu đầu vào
+│   │   ├── styles/
+│   │   └── types/
+│   ├── tests/
+│   │   ├── unit/
+│   │   └── integration/
+│   ├── public/
+│   ├── Dockerfile
+│   ├── .env.example
+│   └── package.json
+├── backend/                     # tầng dữ liệu (MySQL)
+│   └── sql/
+│       ├── schema.sql           # câu lệnh CREATE TABLE
+│       └── seed.ts              # script sinh dữ liệu mẫu (>= 2000 bản ghi)
 ├── docs/
 │   ├── SRS.md
-│   ├── ERD.png
+│   ├── ERD.mwb
+│   ├── ke_hoach_du_an_4_tuan.xlsx
 │   └── postman_collection.json
-├── docker-compose.yml
-├── Dockerfile
-├── .env.example
-└── package.json
+└── docker-compose.yml
 ```
+
+## Chạy ở máy local
+
+1. Bật Docker Desktop, rồi khởi động MySQL + Adminer (schema được nạp tự động lần đầu):
+
+   ```bash
+   docker compose up -d db adminer
+   ```
+
+2. Cài dependencies và tạo file môi trường:
+
+   ```bash
+   cd frontend
+   npm install
+   cp .env.example .env.local   # điền NEXTAUTH_SECRET (openssl rand -base64 32)
+   ```
+
+3. Chạy app:
+
+   ```bash
+   npm run dev
+   ```
+
+- Web: http://localhost:3000
+- Adminer (xem DB): http://localhost:8080 — server `db`, user `finance_user`, mật khẩu `finance_password`, DB `finance_app`
+- MySQL trên máy host: `localhost:3307` (dùng cổng 3307 để không trùng MySQL cài native ở 3306)
