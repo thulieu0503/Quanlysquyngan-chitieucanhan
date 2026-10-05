@@ -1,5 +1,8 @@
 # dependencies
 node_modules/
+backend/.venv/
+backend/__pycache__/
+**/__pycache__/
 
 # next.js build output
 .next/

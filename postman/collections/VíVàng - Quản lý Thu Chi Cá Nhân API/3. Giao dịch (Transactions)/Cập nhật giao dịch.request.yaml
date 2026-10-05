@@ -1,0 +1,16 @@
+$kind: http-request
+url: "{{baseUrl}}/api/transactions/1"
+method: PUT
+headers:
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+      "categoryId": 5,
+      "type": "expense",
+      "amount": 65000,
+      "transactionDate": "2026-09-27",
+      "note": "Cà phê và ăn sáng"
+    }
+order: 5000

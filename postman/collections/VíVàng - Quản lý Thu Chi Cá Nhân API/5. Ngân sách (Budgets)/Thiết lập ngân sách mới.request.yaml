@@ -1,0 +1,15 @@
+$kind: http-request
+url: "{{baseUrl}}/api/budgets"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+      "categoryId": 5,
+      "amountLimit": 3000000,
+      "periodStart": "2026-09-01",
+      "periodEnd": "2026-09-30"
+    }
+order: 2000

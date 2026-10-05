@@ -1,0 +1,7 @@
+$kind: http-request
+url: "{{baseUrl}}/api/admin/categories/72"
+method: DELETE
+body:
+  type: json
+  content: ""
+order: 8000

@@ -1,0 +1,7 @@
+$kind: http-request
+url: "{{baseUrl}}/api/dashboard?year=2026&month=9"
+method: GET
+queryParams:
+  year: "2026"
+  month: "9"
+order: 1000

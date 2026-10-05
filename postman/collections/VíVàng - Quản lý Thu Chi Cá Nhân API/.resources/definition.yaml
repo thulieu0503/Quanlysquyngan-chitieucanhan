@@ -1,0 +1,4 @@
+$kind: collection
+description: Bộ sưu tập Postman hoàn chỉnh cho ứng dụng Quản lý Thu Chi Cá Nhân (VíVàng). Bao gồm toàn bộ API Xác thực, Giao dịch, Danh mục, Ngân sách, Báo cáo, Nhắc nhở và Quản trị Admin.
+variables:
+  baseUrl: http://localhost:3000

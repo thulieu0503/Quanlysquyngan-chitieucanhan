@@ -12,6 +12,8 @@ type TextFieldProps = {
   error?: string;
   icon?: React.ReactNode;
   autoComplete?: string;
+  inputMode?: "text" | "numeric" | "email";
+  maxLength?: number;
 };
 
 export function TextField({
@@ -23,6 +25,8 @@ export function TextField({
   error,
   icon,
   autoComplete,
+  inputMode,
+  maxLength,
 }: TextFieldProps) {
   const id = useId();
   const [show, setShow] = useState(false);
@@ -46,6 +50,8 @@ export function TextField({
           placeholder={placeholder}
           value={value}
           autoComplete={autoComplete}
+          inputMode={inputMode}
+          maxLength={maxLength}
           onChange={(e) => onChange(e.target.value)}
           className={`h-[46px] w-full rounded-[10px] border-[1.5px] bg-white pl-10 pr-4 text-[14.5px] text-ink outline-none transition-colors focus:border-green focus:ring-[3px] focus:ring-green/15 ${
             isPassword ? "pr-11" : ""

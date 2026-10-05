@@ -1,15 +1,53 @@
-# Backend — tầng dữ liệu
+# Backend — FastAPI (Python)
 
-Dự án dùng **Next.js làm cả frontend lẫn backend** (theo SRS): các API route nằm ở
-`frontend/src/app/api`, kết nối MySQL qua `mysql2` (SQL thuần) tại `frontend/src/lib/db.ts`.
-
-Thư mục `backend/` chứa phần **cơ sở dữ liệu** dùng chung cho app và Docker:
+Dịch vụ backend độc lập, viết bằng **Python (FastAPI)**, sở hữu toàn bộ logic nghiệp vụ,
+truy cập MySQL (SQL thuần qua `aiomysql`, không dùng ORM — đúng yêu cầu đề bài), phát hành
+JWT và gửi email. `frontend/` (Next.js) chỉ còn là client: mọi request `/api/*` được
+`frontend/next.config.mjs` rewrite sang service này (biến `BACKEND_URL`), nên trình duyệt
+luôn thấy một origin duy nhất và cookie phiên vẫn là first-party.
 
 ```
 backend/
-└── sql/
-    ├── schema.sql   # CREATE TABLE (users, categories, transactions, budgets, reminders, audit_logs, password_resets) + view v_budget_usage
-    └── seed.ts      # (sẽ thêm) script sinh >= 2.000 bản ghi dữ liệu mẫu
+├── app/
+│   ├── main.py            FastAPI app, CORS, exception handler, đăng ký router
+│   ├── config.py          Cấu hình đọc từ .env (pydantic-settings)
+│   ├── db.py               Connection pool aiomysql, with_transaction()
+│   ├── security.py         bcrypt hash/verify, JWT encode/decode
+│   ├── rbac.py             Roles/actions/ma trận quyền (SRS §4)
+│   ├── deps.py              get_current_user, require_action(action)
+│   ├── errors.py            ApiError + exception handler thống nhất
+│   ├── otp.py / mail.py     Mã OTP đặt lại mật khẩu, gửi email (SMTP/Mailpit)
+│   ├── audit.py             Ghi audit_logs
+│   ├── pagination.py        Helper phân trang {data,total,page,limit,totalPages}
+│   ├── schemas/              Validate request theo từng module (auth, transaction, ...)
+│   ├── repositories/          Toàn bộ câu SQL, theo bảng (transactions, budgets, ...)
+│   └── routers/               Endpoint HTTP, ứng với từng module nghiệp vụ
+├── sql/schema.sql          Schema MySQL (dùng chung cho app và Docker)
+├── sql/seed.ts              Script sinh dữ liệu mẫu
+├── requirements.txt
+└── Dockerfile
 ```
 
-`docker-compose.yml` mount `sql/schema.sql` vào MySQL, nên schema được nạp tự động ở lần khởi tạo container đầu tiên.
+## Chạy local (không cần Docker)
+
+```bash
+cd backend
+python -m venv .venv
+.venv/Scripts/activate        # Windows; Linux/Mac: source .venv/bin/activate
+pip install -r requirements.txt
+cp .env.example .env          # điền DB_*, JWT_SECRET, SMTP_*
+uvicorn app.main:app --reload --port 8000
+```
+
+Frontend chạy `npm run dev` ở `frontend/` với `BACKEND_URL=http://localhost:8000` trong
+`frontend/.env.local` — xem `frontend/.env.example`.
+
+## Chạy bằng Docker Compose
+
+`docker-compose.yml` ở gốc repo có service `api` (build từ `backend/Dockerfile`), `db`
+(MySQL, tự nạp `sql/schema.sql`), `mailpit` (SMTP giả cho dev) và `app` (frontend, rewrite
+`/api/*` sang `api:8000` qua mạng nội bộ Docker).
+
+```bash
+docker compose up --build
+```

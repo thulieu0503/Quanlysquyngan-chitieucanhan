@@ -1,0 +1,13 @@
+$kind: http-request
+url: "{{baseUrl}}/api/categories/13"
+method: PUT
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "name": "Thiết bị điện tử",
+      "type": "expense"
+    }
+order: 3000

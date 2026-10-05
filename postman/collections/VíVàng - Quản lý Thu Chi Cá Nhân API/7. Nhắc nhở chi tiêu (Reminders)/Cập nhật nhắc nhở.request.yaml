@@ -1,0 +1,18 @@
+$kind: http-request
+url: "{{baseUrl}}/api/reminders/1"
+method: PUT
+headers:
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+      "title": "Thanh toán tiền nhà tháng 10 (Đã hẹn)",
+      "categoryId": 8,
+      "amount": 3500000,
+      "recurrence": "monthly",
+      "nextRunDate": "2026-10-05",
+      "channel": "both",
+      "isActive": true
+    }
+order: 4000

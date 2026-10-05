@@ -1,0 +1,13 @@
+$kind: http-request
+url: "{{baseUrl}}/api/transactions/import"
+method: POST
+headers:
+  Content-Type: text/csv; charset=utf-8
+body:
+  type: text
+  content: |-
+    date,type,category,amount,note
+    2026-09-25,expense,Ăn uống,45000,Cà phê sữa
+    2026-09-26,income,Lương,18000000,Lương tháng 9
+    2026-09-27,expense,Di chuyển,50000,Xăng xe
+order: 8000

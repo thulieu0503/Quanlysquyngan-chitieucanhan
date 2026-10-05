@@ -1,47 +1,50 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { AuthShell } from "@/components/auth/AuthShell";
+import { Button } from "@/components/ui/Button";
+import { FormAlert } from "@/components/ui/FormAlert";
 import { TextField } from "@/components/ui/TextField";
-import { CheckCircleIcon, MailIcon } from "@/components/ui/icons";
-import { validateEmail } from "@/lib/validators/auth";
+import { MailIcon } from "@/components/ui/icons";
+import { postJson } from "@/lib/api-client";
+import { normalizeEmail, validateEmail } from "@/lib/validators/auth";
 
 export default function ForgotPasswordPage() {
+  const router = useRouter();
   const [email, setEmail] = useState("");
-  const [error, setError] = useState<string | undefined>();
-  const [sent, setSent] = useState(false);
+  const [error, setError] = useState<string>();
+  const [formError, setFormError] = useState<string>();
+  const [loading, setLoading] = useState(false);
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     const err = validateEmail(email);
     setError(err);
-    if (err) {
-      setSent(false);
+    setFormError(undefined);
+    if (err) return;
+
+    setLoading(true);
+    const result = await postJson("/api/auth/forgot-password", { email });
+    if (!result.ok) {
+      setLoading(false);
+      setFormError(result.error.fields?.email ?? result.error.message);
       return;
     }
-    setSent(true);
-    // TODO: gọi API /api/auth/forgot-password khi backend sẵn sàng.
+    // Chuyển sang bước nhập mã. Trang sau luôn báo "nếu email đã đăng ký..." nên không lộ email có tồn tại hay không.
+    router.push(`/reset-password?email=${encodeURIComponent(normalizeEmail(email))}`);
   }
 
   return (
     <AuthShell>
-      <p className="mb-2.5 text-[13px] font-semibold uppercase tracking-wide text-gold">
-        Khôi phục tài khoản
-      </p>
+      <p className="mb-2.5 text-[13px] font-semibold uppercase tracking-wide text-gold">Khôi phục tài khoản</p>
       <h1 className="mb-2 font-serif text-[32px] font-semibold text-ink">Quên mật khẩu?</h1>
       <p className="mb-7 text-[14.5px] leading-relaxed text-ink-soft">
-        Nhập email đã đăng ký, chúng tôi sẽ gửi cho bạn liên kết để đặt lại mật khẩu.
+        Nhập email đã đăng ký, chúng tôi sẽ gửi mã xác nhận gồm 6 chữ số để bạn đặt mật khẩu mới.
       </p>
 
-      {sent && (
-        <div className="mb-5 flex items-center gap-2.5 rounded-[10px] border border-green/30 bg-green/10 px-3.5 py-3">
-          <CheckCircleIcon className="h-[18px] w-[18px] flex-shrink-0 text-green" />
-          <span className="text-[13.5px] font-medium text-green-dark">
-            Nếu email tồn tại, liên kết đặt lại mật khẩu đã được gửi. (bản demo giao diện)
-          </span>
-        </div>
-      )}
+      {formError && <FormAlert tone="error">{formError}</FormAlert>}
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-4" noValidate>
         <TextField
@@ -55,12 +58,7 @@ export default function ForgotPasswordPage() {
           autoComplete="email"
         />
 
-        <button
-          type="submit"
-          className="mt-1.5 h-[50px] rounded-[10px] bg-gold text-[15px] font-bold text-ink shadow-[0_10px_24px_rgba(201,151,43,0.35)] transition-colors hover:bg-gold-dark active:translate-y-px"
-        >
-          Gửi liên kết đặt lại
-        </button>
+        <Button loading={loading}>Gửi mã xác nhận</Button>
 
         <p className="mt-1 text-center text-[13.5px] text-ink-soft">
           Đã nhớ mật khẩu?{" "}

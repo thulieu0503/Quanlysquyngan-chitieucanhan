@@ -1,0 +1,13 @@
+$kind: http-request
+url: "{{baseUrl}}/api/categories"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+      "name": "Đồ công nghệ",
+      "type": "expense"
+    }
+order: 2000

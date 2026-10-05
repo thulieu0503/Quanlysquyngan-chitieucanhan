@@ -29,6 +29,34 @@ services:
     depends_on:
       - db
 
+  # Hộp thư giả cho môi trường dev: nhận email từ app (SMTP :1025), xem tại http://localhost:8025
+  mailpit:
+    image: axllent/mailpit:latest
+    restart: unless-stopped
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+
+  api:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    env_file:
+      - ./backend/.env
+    environment:
+      # Trong mạng Docker, api gọi DB/mailpit qua tên service (không phải cổng map ra host).
+      DB_HOST: db
+      DB_PORT: "3306"
+      SMTP_HOST: mailpit
+      SMTP_PORT: "1025"
+      CORS_ORIGIN: http://localhost:3000
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+
   app:
     build:
       context: ./frontend
@@ -37,15 +65,12 @@ services:
     env_file:
       - ./frontend/.env.local
     environment:
-      # Trong mạng Docker, app gọi DB qua service "db" ở cổng nội bộ 3306
-      # (3307 chỉ là cổng map ra máy host).
-      DB_HOST: db
-      DB_PORT: "3306"
+      # Trong mạng Docker, app gọi API qua tên service "api" ở cổng nội bộ 8000.
+      BACKEND_URL: http://api:8000
     ports:
       - "3000:3000"
     depends_on:
-      db:
-        condition: service_healthy
+      - api
 
 volumes:
   db_data:

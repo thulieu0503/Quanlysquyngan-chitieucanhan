@@ -1,0 +1,4 @@
+$kind: http-request
+url: "{{baseUrl}}/api/budgets/1"
+method: DELETE
+order: 5000

@@ -1,0 +1,16 @@
+$kind: http-request
+url: "{{baseUrl}}/api/transactions/"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+      "categoryId": 1,
+      "type": "income",
+      "amount": 15000000,
+      "transactionDate": "2026-09-27",
+      "note": "Nhận lương tháng"
+    }
+order: 3000

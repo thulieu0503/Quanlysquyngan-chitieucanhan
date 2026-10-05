@@ -83,9 +83,14 @@ project-root/
 │   │   │   └── api/             # API routes
 │   │   ├── components/          # UI components dùng chung
 │   │   ├── lib/
-│   │   │   ├── db.ts            # connection pool mysql2
-│   │   │   ├── auth.ts          # cấu hình NextAuth
-│   │   │   └── validators/      # kiểm tra dữ liệu đầu vào
+│   │   │   ├── db.ts            # connection pool mysql2 + withTransaction
+│   │   │   ├── auth.ts          # cấu hình NextAuth (Credentials + JWT)
+│   │   │   ├── rbac.ts          # ma trận role -> action (theo SRS §4)
+│   │   │   ├── session.ts       # getCurrentUser (đọc lại status/role từ DB)
+│   │   │   ├── http.ts          # withAuth(action, handler), lỗi API thống nhất
+│   │   │   ├── mail.ts          # gửi email (nodemailer)
+│   │   │   ├── repositories/    # toàn bộ SQL (tham số hóa) theo bảng
+│   │   │   └── validators/      # kiểm tra dữ liệu đầu vào (dùng chung client + server)
 │   │   ├── styles/
 │   │   └── types/
 │   ├── tests/
@@ -95,6 +100,7 @@ project-root/
 │   ├── Dockerfile
 │   ├── .env.example
 │   └── package.json
+├── .github/workflows/ci.yml     # CI: lint, typecheck, build khi push/PR
 ├── backend/                     # tầng dữ liệu (MySQL)
 │   └── sql/
 │       ├── schema.sql           # câu lệnh CREATE TABLE
@@ -109,10 +115,10 @@ project-root/
 
 ## Chạy ở máy local
 
-1. Bật Docker Desktop, rồi khởi động MySQL + Adminer (schema được nạp tự động lần đầu):
+1. Bật Docker Desktop, rồi khởi động MySQL + Adminer + Mailpit (schema được nạp tự động lần đầu):
 
    ```bash
-   docker compose up -d db adminer
+   docker compose up -d db adminer mailpit
    ```
 
 2. Cài dependencies và tạo file môi trường:
@@ -131,4 +137,5 @@ project-root/
 
 - Web: http://localhost:3000
 - Adminer (xem DB): http://localhost:8080 — server `db`, user `finance_user`, mật khẩu `finance_password`, DB `finance_app`
+- Mailpit (hộp thư dev, xem email đặt lại mật khẩu): http://localhost:8025 — đặt `SMTP_HOST=localhost`, `SMTP_PORT=1025` trong `.env.local`
 - MySQL trên máy host: `localhost:3307` (dùng cổng 3307 để không trùng MySQL cài native ở 3306)

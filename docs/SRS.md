@@ -28,7 +28,7 @@ Người phát triển, giảng viên hướng dẫn/phản biện, người ki�
 | Admin | Quản trị viên, quản lý người dùng và danh mục mặc định của hệ thống |
 
 ### 2.2 Ràng buộc chung
-- Nền tảng: Web (Next.js, TypeScript)
+- Nền tảng: Web — frontend Next.js (TypeScript), backend FastAPI (Python); frontend chỉ đóng vai trò client, mọi API do backend phục vụ qua rewrite proxy
 - Cơ sở dữ liệu: MySQL, truy vấn bằng SQL thuần (không dùng ORM)
 - Thời gian triển khai: 4 tuần, 1 người thực hiện
 - Admin **không** được xem chi tiết giao dịch cá nhân của User (ràng buộc thiết kế có chủ đích, vì lý do riêng tư dữ liệu tài chính)
@@ -38,7 +38,7 @@ Người phát triển, giảng viên hướng dẫn/phản biện, người ki�
 | Mã | Chức năng | Mô tả | Actor |
 |---|---|---|---|
 | FR-01 | Đăng ký / Đăng nhập | Tạo tài khoản, xác thực bằng JWT | User, Admin |
-| FR-02 | Đặt lại mật khẩu | Quên mật khẩu, gửi liên kết đặt lại qua email | User, Admin |
+| FR-02 | Đặt lại mật khẩu | Quên mật khẩu: gửi mã xác nhận 6 số qua email (hiệu lực 15 phút, tối đa 5 lần nhập sai); nhập mã + mật khẩu mới rồi đăng nhập lại | User, Admin |
 | FR-03 | Ghi thu nhập | Nhập khoản thu, gắn category, ngày, ghi chú | User |
 | FR-04 | Ghi chi tiêu | Nhập khoản chi, gắn category, ngày, ghi chú | User |
 | FR-05 | Danh sách giao dịch | Tìm kiếm, lọc, sắp xếp, phân trang | User |

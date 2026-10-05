@@ -1,0 +1,13 @@
+$kind: http-request
+url: "{{baseUrl}}/api/admin/categories"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+      "name": "Bảo hiểm & Y tế",
+      "type": "expense"
+    }
+order: 6000

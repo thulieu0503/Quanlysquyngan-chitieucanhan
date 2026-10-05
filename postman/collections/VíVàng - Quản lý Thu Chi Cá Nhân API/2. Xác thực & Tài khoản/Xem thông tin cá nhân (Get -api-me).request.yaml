@@ -1,0 +1,5 @@
+$kind: http-request
+name: Xem thông tin cá nhân (Get /api/me)
+url: "{{baseUrl}}/api/me"
+method: GET
+order: 7000

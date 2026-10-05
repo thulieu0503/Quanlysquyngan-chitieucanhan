@@ -1,0 +1,7 @@
+$kind: http-request
+url: "{{baseUrl}}/api/admin/users/5"
+method: GET
+body:
+  type: json
+  content: ""
+order: 3000

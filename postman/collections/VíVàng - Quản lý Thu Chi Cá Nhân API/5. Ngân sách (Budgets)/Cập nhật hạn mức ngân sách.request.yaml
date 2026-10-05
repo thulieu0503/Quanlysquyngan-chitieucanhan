@@ -1,0 +1,14 @@
+$kind: http-request
+url: "{{baseUrl}}/api/budgets/1"
+method: PUT
+headers:
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+      "amountLimit": 4000000,
+      "periodStart": "2026-09-01",
+      "periodEnd": "2026-09-30"
+    }
+order: 4000

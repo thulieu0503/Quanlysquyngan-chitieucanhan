@@ -1,0 +1,13 @@
+$kind: http-request
+name: Khóa hoặc Mở khóa tài khoản (Lock / Unlock)
+url: "{{baseUrl}}/api/admin/users/2"
+method: PATCH
+headers:
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+      "status": "active"
+    }
+order: 4000

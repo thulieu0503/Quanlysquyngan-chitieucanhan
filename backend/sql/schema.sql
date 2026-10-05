@@ -37,7 +37,9 @@ CREATE TABLE users (
   COMMENT='Tài khoản người dùng và quản trị viên';
 
 -- ---------------------------------------------------------------------
--- Bảng password_resets: token đặt lại mật khẩu (FR-02)
+-- Bảng password_resets: mã xác nhận (OTP 6 số) đặt lại mật khẩu (FR-02)
+-- token   = HMAC-SHA256 của mã (không lưu mã thô)
+-- attempts = số lần nhập sai; quá giới hạn thì mã bị vô hiệu hóa
 -- ---------------------------------------------------------------------
 CREATE TABLE password_resets (
   id          INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
@@ -45,6 +47,7 @@ CREATE TABLE password_resets (
   token       VARCHAR(255) NOT NULL,
   expires_at  TIMESTAMP NOT NULL,
   used_at     TIMESTAMP NULL DEFAULT NULL COMMENT 'Đánh dấu token đã dùng, tránh dùng lại',
+  attempts    TINYINT UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Số lần nhập sai mã',
   created_at  TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   CONSTRAINT fk_password_resets_user
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE ON UPDATE CASCADE,

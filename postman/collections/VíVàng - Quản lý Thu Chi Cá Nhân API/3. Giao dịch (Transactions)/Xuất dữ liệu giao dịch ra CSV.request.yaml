@@ -1,0 +1,6 @@
+$kind: http-request
+url: "{{baseUrl}}/api/transactions/export?type=expense"
+method: GET
+queryParams:
+  type: expense
+order: 7000

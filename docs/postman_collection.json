@@ -1,0 +1,875 @@
+{
+  "info": {
+    "_postman_id": "8f2a1b9e-4c7d-4f12-a6e5-3b9c0d12e345",
+    "name": "VíVàng - Quản lý Thu Chi Cá Nhân API",
+    "description": "Bộ sưu tập Postman hoàn chỉnh cho ứng dụng Quản lý Thu Chi Cá Nhân (VíVàng). Bao gồm toàn bộ API Xác thực, Giao dịch, Danh mục, Ngân sách, Báo cáo, Nhắc nhở và Quản trị Admin.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Hệ thống & Sức khỏe",
+      "item": [
+        {
+          "name": "Kiểm tra trạng thái (Health Check)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/health",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "health"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Xác thực & Tài khoản",
+      "item": [
+        {
+          "name": "Đăng ký tài khoản (Register)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Nguyễn Văn A\",\n  \"email\": \"testuser@vivang.app\",\n  \"password\": \"Password123!\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/register",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "register"]
+            }
+          }
+        },
+        {
+          "name": "Lấy CSRF Token (Cho NextAuth)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/csrf",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "csrf"]
+            }
+          }
+        },
+        {
+          "name": "Đăng nhập (NextAuth Credentials Login)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"user1@vivang.app\",\n  \"password\": \"Password123!\",\n  \"redirect\": false,\n  \"callbackUrl\": \"/dashboard\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/callback/credentials",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "callback", "credentials"]
+            }
+          }
+        },
+        {
+          "name": "Đăng nhập với tài khoản Admin",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@vivang.app\",\n  \"password\": \"Admin@123!\",\n  \"redirect\": false,\n  \"callbackUrl\": \"/dashboard\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/callback/credentials",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "callback", "credentials"]
+            }
+          }
+        },
+        {
+          "name": "Quên mật khẩu - Gửi mã OTP (Forgot Password)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"user1@vivang.app\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/forgot-password",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "forgot-password"]
+            }
+          }
+        },
+        {
+          "name": "Đặt lại mật khẩu bằng OTP (Reset Password)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"user1@vivang.app\",\n  \"code\": \"123456\",\n  \"password\": \"NewPassword123!\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/reset-password",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "reset-password"]
+            }
+          }
+        },
+        {
+          "name": "Xem thông tin cá nhân (Get /api/me)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/me",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "me"]
+            }
+          }
+        },
+        {
+          "name": "Cập nhật họ tên (Patch /api/me)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Nguyễn Văn A (Updated)\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/me",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "me"]
+            }
+          }
+        },
+        {
+          "name": "Đổi mật khẩu (Put /api/me/password)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"oldPassword\": \"Password123!\",\n  \"newPassword\": \"NewPassword123!\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/me/password",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "me", "password"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Giao dịch (Transactions)",
+      "item": [
+        {
+          "name": "Danh sách giao dịch (Có phân trang & lọc)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/transactions?page=1&limit=10&type=expense",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "transactions"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                },
+                {
+                  "key": "type",
+                  "value": "expense",
+                  "description": "income hoặc expense"
+                },
+                {
+                  "key": "search",
+                  "value": "Cà phê",
+                  "disabled": true
+                },
+                {
+                  "key": "categoryId",
+                  "value": "5",
+                  "disabled": true
+                },
+                {
+                  "key": "dateFrom",
+                  "value": "2026-09-01",
+                  "disabled": true
+                },
+                {
+                  "key": "dateTo",
+                  "value": "2026-09-30",
+                  "disabled": true
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Thêm giao dịch mới (Tạo chi tiêu)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"categoryId\": 5,\n  \"type\": \"expense\",\n  \"amount\": 45000,\n  \"transactionDate\": \"2026-09-27\",\n  \"note\": \"Cà phê sáng\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/transactions",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "transactions"]
+            }
+          }
+        },
+        {
+          "name": "Thêm giao dịch mới (Tạo thu nhập)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"categoryId\": 1,\n  \"type\": \"income\",\n  \"amount\": 15000000,\n  \"transactionDate\": \"2026-09-27\",\n  \"note\": \"Nhận lương tháng\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/transactions",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "transactions"]
+            }
+          }
+        },
+        {
+          "name": "Xem chi tiết giao dịch",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/transactions/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "transactions", "1"]
+            }
+          }
+        },
+        {
+          "name": "Cập nhật giao dịch",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"categoryId\": 5,\n  \"type\": \"expense\",\n  \"amount\": 65000,\n  \"transactionDate\": \"2026-09-27\",\n  \"note\": \"Cà phê và ăn sáng\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/transactions/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "transactions", "1"]
+            }
+          }
+        },
+        {
+          "name": "Xóa giao dịch (Soft Delete)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/transactions/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "transactions", "1"]
+            }
+          }
+        },
+        {
+          "name": "Xuất dữ liệu giao dịch ra CSV",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/transactions/export?type=expense",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "transactions", "export"],
+              "query": [
+                {
+                  "key": "type",
+                  "value": "expense"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Nhập dữ liệu hàng loạt từ CSV",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "text/csv; charset=utf-8"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "date,type,category,amount,note\n2026-09-25,expense,Ăn uống,45000,Cà phê sữa\n2026-09-26,income,Lương,18000000,Lương tháng 9\n2026-09-27,expense,Di chuyển,50000,Xăng xe"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/transactions/import",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "transactions", "import"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Danh mục (Categories)",
+      "item": [
+        {
+          "name": "Danh sách danh mục (Hệ thống + Riêng)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/categories",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "categories"]
+            }
+          }
+        },
+        {
+          "name": "Tạo danh mục riêng cho User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Đồ công nghệ\",\n  \"type\": \"expense\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/categories",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "categories"]
+            }
+          }
+        },
+        {
+          "name": "Cập nhật danh mục riêng",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Thiết bị điện tử\",\n  \"type\": \"expense\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/categories/13",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "categories", "13"]
+            }
+          }
+        },
+        {
+          "name": "Xóa danh mục riêng (Soft Delete)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/categories/13",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "categories", "13"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. Ngân sách (Budgets)",
+      "item": [
+        {
+          "name": "Danh sách ngân sách kèm % đã dùng & cảnh báo",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/budgets",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "budgets"]
+            }
+          }
+        },
+        {
+          "name": "Thiết lập ngân sách mới",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"categoryId\": 5,\n  \"amountLimit\": 3000000,\n  \"periodStart\": \"2026-09-01\",\n  \"periodEnd\": \"2026-09-30\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/budgets",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "budgets"]
+            }
+          }
+        },
+        {
+          "name": "Xem chi tiết ngân sách",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/budgets/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "budgets", "1"]
+            }
+          }
+        },
+        {
+          "name": "Cập nhật hạn mức ngân sách",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"amountLimit\": 4000000,\n  \"periodStart\": \"2026-09-01\",\n  \"periodEnd\": \"2026-09-30\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/budgets/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "budgets", "1"]
+            }
+          }
+        },
+        {
+          "name": "Xóa ngân sách",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/budgets/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "budgets", "1"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "6. Dashboard & Báo cáo",
+      "item": [
+        {
+          "name": "Tổng quan Dashboard (Thống kê, Top chi tiêu, Biểu đồ)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/dashboard?year=2026&month=9",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "dashboard"],
+              "query": [
+                {
+                  "key": "year",
+                  "value": "2026"
+                },
+                {
+                  "key": "month",
+                  "value": "9"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Báo cáo tài chính theo tháng (Monthly Report)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/reports/monthly?year=2026&month=9",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "reports", "monthly"],
+              "query": [
+                {
+                  "key": "year",
+                  "value": "2026"
+                },
+                {
+                  "key": "month",
+                  "value": "9"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Xuất báo cáo tài chính ra CSV",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/reports/export?year=2026&month=9&format=csv",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "reports", "export"],
+              "query": [
+                {
+                  "key": "year",
+                  "value": "2026"
+                },
+                {
+                  "key": "month",
+                  "value": "9"
+                },
+                {
+                  "key": "format",
+                  "value": "csv"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "7. Nhắc nhở chi tiêu (Reminders)",
+      "item": [
+        {
+          "name": "Danh sách nhắc nhở",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/reminders",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "reminders"]
+            }
+          }
+        },
+        {
+          "name": "Tạo nhắc nhở mới",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Thanh toán tiền nhà tháng 10\",\n  \"categoryId\": 8,\n  \"amount\": 3500000,\n  \"recurrence\": \"monthly\",\n  \"nextRunDate\": \"2026-10-01\",\n  \"channel\": \"in_app\",\n  \"isActive\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/reminders",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "reminders"]
+            }
+          }
+        },
+        {
+          "name": "Xem chi tiết nhắc nhở",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/reminders/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "reminders", "1"]
+            }
+          }
+        },
+        {
+          "name": "Cập nhật nhắc nhở",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Thanh toán tiền nhà tháng 10 (Đã hẹn)\",\n  \"categoryId\": 8,\n  \"amount\": 3500000,\n  \"recurrence\": \"monthly\",\n  \"nextRunDate\": \"2026-10-05\",\n  \"channel\": \"both\",\n  \"isActive\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/reminders/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "reminders", "1"]
+            }
+          }
+        },
+        {
+          "name": "Xóa nhắc nhở",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/reminders/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "reminders", "1"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "8. Quản trị hệ thống (Admin Only)",
+      "item": [
+        {
+          "name": "Thống kê toàn hệ thống (System Stats)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/stats",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "stats"]
+            }
+          }
+        },
+        {
+          "name": "Danh sách người dùng (Users List)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/users?page=1&limit=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "users"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                },
+                {
+                  "key": "search",
+                  "value": "user1",
+                  "disabled": true
+                },
+                {
+                  "key": "status",
+                  "value": "active",
+                  "disabled": true
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Xem profile người dùng",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/users/2",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "users", "2"]
+            }
+          }
+        },
+        {
+          "name": "Khóa hoặc Mở khóa tài khoản (Lock / Unlock)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"locked\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/users/2",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "users", "2"]
+            }
+          }
+        },
+        {
+          "name": "Danh sách danh mục mặc định",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/categories",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "categories"]
+            }
+          }
+        },
+        {
+          "name": "Tạo danh mục mặc định hệ thống",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Bảo hiểm & Y tế cao cấp\",\n  \"type\": \"expense\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/categories",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "categories"]
+            }
+          }
+        },
+        {
+          "name": "Cập nhật danh mục mặc định",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Bảo hiểm & Y tế\",\n  \"type\": \"expense\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/categories/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "categories", "1"]
+            }
+          }
+        },
+        {
+          "name": "Xóa danh mục mặc định (Soft Delete)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/categories/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "categories", "1"]
+            }
+          }
+        },
+        {
+          "name": "Xem nhật ký hệ thống (Audit Logs)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/audit-logs?page=1&limit=20",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "audit-logs"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "20"
+                },
+                {
+                  "key": "action",
+                  "value": "transactions.create",
+                  "disabled": true
+                }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

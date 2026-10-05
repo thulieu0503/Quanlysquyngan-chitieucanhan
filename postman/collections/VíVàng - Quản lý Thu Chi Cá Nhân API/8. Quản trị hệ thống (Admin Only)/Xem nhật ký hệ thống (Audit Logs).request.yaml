@@ -1,0 +1,15 @@
+$kind: http-request
+url: "{{baseUrl}}/api/admin/audit-logs?page=1&limit=20"
+method: GET
+queryParams:
+  - key: page
+    value: "1"
+  - key: limit
+    value: "20"
+  - key: action
+    value: transactions.create
+    disabled: true
+body:
+  type: json
+  content: ""
+order: 9000

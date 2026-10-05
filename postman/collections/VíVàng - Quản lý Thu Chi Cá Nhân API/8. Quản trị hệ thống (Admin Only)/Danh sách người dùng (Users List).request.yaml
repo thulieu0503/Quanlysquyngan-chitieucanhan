@@ -1,0 +1,15 @@
+$kind: http-request
+url: "{{baseUrl}}/api/admin/users?page=1&limit=10"
+method: GET
+queryParams:
+  - key: page
+    value: "1"
+  - key: limit
+    value: "10"
+  - key: search
+    value: user1
+    disabled: true
+  - key: status
+    value: active
+    disabled: true
+order: 2000

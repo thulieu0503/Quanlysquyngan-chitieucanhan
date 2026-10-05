@@ -1,0 +1,13 @@
+$kind: http-request
+name: Cập nhật họ tên (Patch /api/me)
+url: http://localhost:3000/api/admin/users/7
+method: PATCH
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "status": "locked"
+    }
+order: 8000

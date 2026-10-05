@@ -1,0 +1,8 @@
+$kind: http-request
+url: "{{baseUrl}}/api/reports/export?year=2026&month=9&format=csv"
+method: GET
+queryParams:
+  year: "2026"
+  month: "9"
+  format: csv
+order: 3000

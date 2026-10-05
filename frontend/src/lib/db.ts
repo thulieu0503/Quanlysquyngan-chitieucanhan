@@ -1,7 +1,7 @@
 import mysql from "mysql2/promise";
+import type { PoolConnection } from "mysql2/promise";
 
 declare global {
-  // eslint-disable-next-line no-var
   var __dbPool: mysql.Pool | undefined;
 }
 
@@ -22,4 +22,23 @@ export const pool =
 
 if (process.env.NODE_ENV !== "production") {
   global.__dbPool = pool;
+}
+
+export async function withTransaction<T>(fn: (conn: PoolConnection) => Promise<T>): Promise<T> {
+  const conn = await pool.getConnection();
+  try {
+    await conn.beginTransaction();
+    const result = await fn(conn);
+    await conn.commit();
+    return result;
+  } catch (err) {
+    await conn.rollback();
+    throw err;
+  } finally {
+    conn.release();
+  }
+}
+
+export function isDuplicateEntry(err: unknown): boolean {
+  return typeof err === "object" && err !== null && (err as { code?: string }).code === "ER_DUP_ENTRY";
 }

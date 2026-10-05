@@ -1,0 +1,13 @@
+$kind: http-request
+url: "{{baseUrl}}/api/admin/categories/1"
+method: PUT
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "name": "Bảo hiểm & Y tếeee",
+      "type": "expense"
+    }
+order: 7000

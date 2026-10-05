@@ -1,0 +1,11 @@
+# Use this workspace to collaborate
+workspace:
+  id: a3dc7b7e-32b5-44a5-81cd-9463f9829cad
+
+localResources:
+  collections:
+    - ../docs/postman_collection.json
+
+cloudResources:
+  collections:
+    ../postman/collections/VíVàng - Quản lý Thu Chi Cá Nhân API: 61295e14-0f4f-40bc-a3e8-96f1c2fd051d
