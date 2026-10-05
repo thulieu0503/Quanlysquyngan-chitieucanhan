@@ -41,18 +41,19 @@ export default function ReportsPage() {
   const [selectedYear, setSelectedYear] = useState(now.getFullYear());
   const [selectedMonth, setSelectedMonth] = useState(now.getMonth() + 1);
   const [report, setReport] = useState<MonthlyReport | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loaded, setLoaded] = useState(false);
 
   const [isPending, startTransition] = useTransition();
+  // Lần tải đầu: hiện loading đến khi có dữ liệu; các lần sau dựa vào isPending của transition.
+  const loading = isPending || !loaded;
 
   const fetchReport = (year: number, month: number) => {
-    setLoading(true);
     startTransition(async () => {
       const res = await getJson<MonthlyReport>(`/api/reports/monthly?year=${year}&month=${month}`);
       if (res.ok) {
         setReport(res.data);
       }
-      setLoading(false);
+      setLoaded(true);
     });
   };
 

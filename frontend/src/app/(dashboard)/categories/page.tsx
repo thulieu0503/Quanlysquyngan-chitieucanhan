@@ -23,7 +23,7 @@ type CategoryItem = {
 
 export default function CategoriesPage() {
   const [categories, setCategories] = useState<CategoryItem[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loaded, setLoaded] = useState(false);
   const [activeTab, setActiveTab] = useState<"all" | "expense" | "income">("all");
 
   // Modals state
@@ -38,9 +38,10 @@ export default function CategoriesPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [isPending, startTransition] = useTransition();
+  // Lần tải đầu: hiện loading đến khi có dữ liệu; các lần sau dựa vào isPending của transition.
+  const loading = isPending || !loaded;
 
   const fetchCategories = () => {
-    setLoading(true);
     startTransition(async () => {
       const res = await getJson<CategoryItem[]>("/api/categories");
       if (res.ok && Array.isArray(res.data)) {
@@ -48,7 +49,7 @@ export default function CategoriesPage() {
       } else {
         setCategories([]);
       }
-      setLoading(false);
+      setLoaded(true);
     });
   };
 

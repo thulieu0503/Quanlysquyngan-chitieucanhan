@@ -53,7 +53,7 @@ export default function TransactionsPage() {
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [loading, setLoading] = useState(true);
+  const [loaded, setLoaded] = useState(false);
 
   // Filters
   const [search, setSearch] = useState("");
@@ -82,6 +82,8 @@ export default function TransactionsPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [isPending, startTransition] = useTransition();
+  // Lần tải đầu: hiện loading đến khi có dữ liệu; các lần sau dựa vào isPending của transition.
+  const loading = isPending || !loaded;
 
   // Load Categories once
   useEffect(() => {
@@ -92,7 +94,6 @@ export default function TransactionsPage() {
 
   // Fetch Transactions
   const fetchTransactions = (currentPage = page) => {
-    setLoading(true);
     startTransition(async () => {
       const params = new URLSearchParams();
       params.set("page", String(currentPage));
@@ -114,7 +115,7 @@ export default function TransactionsPage() {
         setTransactions([]);
         setTotal(0);
       }
-      setLoading(false);
+      setLoaded(true);
     });
   };
 

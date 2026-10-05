@@ -52,7 +52,6 @@ type AuditLogItem = {
 export default function AdminPage() {
   const [stats, setStats] = useState<SystemStats | null>(null);
   const [activeTab, setActiveTab] = useState<"users" | "categories" | "audit">("users");
-  const [loading, setLoading] = useState(true);
 
   // Users Tab state
   const [users, setUsers] = useState<UserItem[]>([]);
@@ -128,10 +127,11 @@ export default function AdminPage() {
   };
 
   useEffect(() => {
-    setLoading(true);
-    Promise.all([fetchStats(), fetchUsers(1), fetchDefaultCategories(), fetchAuditLogs(1)]).finally(() => {
-      setLoading(false);
+    startTransition(async () => {
+      await Promise.all([fetchStats(), fetchDefaultCategories()]);
     });
+    fetchUsers(1);
+    fetchAuditLogs(1);
   }, []);
 
   const handleToggleUserStatus = async (user: UserItem) => {

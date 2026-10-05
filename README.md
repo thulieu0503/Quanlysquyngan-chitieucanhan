@@ -41,79 +41,85 @@
 
 | Thành phần | Công nghệ |
 |---|---|
-| Frontend + Backend | Next.js (App Router, TypeScript) |
-| Cơ sở dữ liệu | MySQL |
-| Truy vấn DB | mysql2 (SQL thuần, không dùng ORM) |
-| Xác thực | NextAuth.js (Credentials provider, JWT strategy) |
-| Giao diện | Tailwind CSS |
-| Biểu đồ | Recharts |
-| Xuất CSV | papaparse |
-| Xuất PDF | react-pdf (@react-pdf/renderer) |
+| Frontend | Next.js (App Router, TypeScript), Tailwind CSS |
+| Backend API | Python FastAPI |
+| Cơ sở dữ liệu | MySQL 8 |
+| Truy vấn DB | aiomysql (SQL thuần, tham số hóa, không dùng ORM) |
+| Xác thực | JWT (PyJWT) lưu trong cookie httponly, mật khẩu băm bcrypt |
+| Email | aiosmtplib (dev: Mailpit) |
 | Container hóa | Docker, docker-compose |
-| CI | GitHub Actions (build & test khi push) |
-| Kiểm thử | Jest (unit test) + Supertest (integration test API) |
-| Tài liệu API | OpenAPI/Swagger + Postman collection |
+| CI | GitHub Actions (lint, typecheck, build frontend; kiểm tra import backend) |
+| Tài liệu API | Swagger tự sinh của FastAPI (`/docs`) + Postman collection |
+
 ## Kiến trúc hệ thống
 
-Kiến trúc 3 tầng:
+Next.js chỉ là client hiển thị giao diện. Mọi request `/api/*` từ trình duyệt được
+`frontend/next.config.mjs` chuyển tiếp (rewrite) sang FastAPI, nên trình duyệt chỉ thấy một origin
+và cookie phiên là first-party.
 
 ```
-Trình duyệt (Next.js + Tailwind CSS)
-        │
-        ▼
-Next.js Application (App Router)
- ├─ Tài khoản & Admin      → Đăng nhập, phân quyền
- ├─ Giao dịch / Category   → Thu, chi, danh mục
- └─ Budget & Dashboard     → Ngân sách, biểu đồ
-        │  (mysql2 - SQL thuần)
-        ▼
-MySQL Database
+Trình duyệt
+    │
+    ▼
+Next.js (frontend/, cổng 3000)  ── giao diện React, rewrite /api/* ──┐
+                                                                     ▼
+                                             FastAPI (backend/, cổng 8000)
+                                              ├─ auth, me, admin
+                                              ├─ transactions, categories
+                                              ├─ budgets, reminders
+                                              └─ reports, dashboard, health
+                                                     │  (aiomysql - SQL thuần)
+                                                     ▼
+                                               MySQL Database
 ```
 
 ## Cấu trúc thư mục
 
 ```
 project-root/
-├── frontend/                    # Next.js (App Router, TypeScript): giao diện + API routes
+├── frontend/                    # Next.js (App Router, TypeScript): chỉ giao diện
 │   ├── src/
 │   │   ├── app/
 │   │   │   ├── (auth)/          # login, register, forgot-password, reset-password
-│   │   │   ├── (dashboard)/     # dashboard, transactions, categories, budgets, reports
-│   │   │   ├── admin/           # trang quản trị
-│   │   │   └── api/             # API routes
+│   │   │   └── (dashboard)/     # dashboard, transactions, categories, budgets, reminders, reports, admin
 │   │   ├── components/          # UI components dùng chung
-│   │   ├── lib/
-│   │   │   ├── db.ts            # connection pool mysql2 + withTransaction
-│   │   │   ├── auth.ts          # cấu hình NextAuth (Credentials + JWT)
-│   │   │   ├── rbac.ts          # ma trận role -> action (theo SRS §4)
-│   │   │   ├── session.ts       # getCurrentUser (đọc lại status/role từ DB)
-│   │   │   ├── http.ts          # withAuth(action, handler), lỗi API thống nhất
-│   │   │   ├── mail.ts          # gửi email (nodemailer)
-│   │   │   ├── repositories/    # toàn bộ SQL (tham số hóa) theo bảng
-│   │   │   └── validators/      # kiểm tra dữ liệu đầu vào (dùng chung client + server)
-│   │   ├── styles/
-│   │   └── types/
+│   │   └── lib/
+│   │       ├── api-client.ts    # getJson/postJson/... gọi /api/*
+│   │       ├── session.ts       # getCurrentUser: hỏi FastAPI GET /api/me
+│   │       └── validators/      # kiểm tra form phía client
 │   ├── tests/
-│   │   ├── unit/
-│   │   └── integration/
-│   ├── public/
 │   ├── Dockerfile
 │   ├── .env.example
 │   └── package.json
-├── .github/workflows/ci.yml     # CI: lint, typecheck, build khi push/PR
-├── backend/                     # tầng dữ liệu (MySQL)
-│   └── sql/
-│       ├── schema.sql           # câu lệnh CREATE TABLE
-│       └── seed.ts              # script sinh dữ liệu mẫu (>= 2000 bản ghi)
+├── backend/                     # FastAPI: toàn bộ nghiệp vụ, xem backend/README.md
+│   ├── app/
+│   │   ├── routers/             # endpoint HTTP theo module
+│   │   ├── repositories/        # toàn bộ câu SQL theo bảng
+│   │   ├── schemas/             # validate request
+│   │   └── seed.py              # sinh dữ liệu mẫu (>= 2000 bản ghi)
+│   ├── sql/schema.sql           # câu lệnh CREATE TABLE
+│   ├── requirements.txt
+│   └── Dockerfile
+├── .github/workflows/ci.yml     # CI khi push/PR
 ├── docs/
 │   ├── SRS.md
+│   ├── report.md
 │   ├── ERD.mwb
 │   ├── ke_hoach_du_an_4_tuan.xlsx
 │   └── postman_collection.json
 └── docker-compose.yml
 ```
 
-## Chạy ở máy local
+## Chạy bằng Docker (đơn giản nhất)
+
+```bash
+cp backend/.env.example backend/.env          # điền JWT_SECRET (openssl rand -base64 32)
+cp frontend/.env.example frontend/.env.local
+docker compose up --build
+docker compose exec api python -m app.seed    # (tuỳ chọn) nạp dữ liệu mẫu
+```
+
+## Chạy ở máy local (không Docker cho app)
 
 1. Bật Docker Desktop, rồi khởi động MySQL + Adminer + Mailpit (schema được nạp tự động lần đầu):
 
@@ -121,21 +127,31 @@ project-root/
    docker compose up -d db adminer mailpit
    ```
 
-2. Cài dependencies và tạo file môi trường:
+2. Backend:
+
+   ```bash
+   cd backend
+   python -m venv .venv
+   .venv/Scripts/activate        # Windows; Linux/Mac: source .venv/bin/activate
+   pip install -r requirements.txt
+   cp .env.example .env          # điền JWT_SECRET; SMTP_HOST=localhost, SMTP_PORT=1025 để dùng Mailpit
+   python -m app.seed            # (tuỳ chọn) nạp dữ liệu mẫu
+   uvicorn app.main:app --reload --port 8000
+   ```
+
+3. Frontend (terminal khác):
 
    ```bash
    cd frontend
    npm install
-   cp .env.example .env.local   # điền NEXTAUTH_SECRET (openssl rand -base64 32)
-   ```
-
-3. Chạy app:
-
-   ```bash
+   cp .env.example .env.local    # BACKEND_URL=http://localhost:8000
    npm run dev
    ```
 
 - Web: http://localhost:3000
+- Swagger API: http://localhost:8000/docs
 - Adminer (xem DB): http://localhost:8080 — server `db`, user `finance_user`, mật khẩu `finance_password`, DB `finance_app`
-- Mailpit (hộp thư dev, xem email đặt lại mật khẩu): http://localhost:8025 — đặt `SMTP_HOST=localhost`, `SMTP_PORT=1025` trong `.env.local`
+- Mailpit (hộp thư dev, xem email đặt lại mật khẩu): http://localhost:8025
 - MySQL trên máy host: `localhost:3307` (dùng cổng 3307 để không trùng MySQL cài native ở 3306)
+
+Tài khoản mẫu sau khi chạy seed: `admin@vivang.app` / `Admin@123!`, `user1@vivang.app` / `Password123!`.

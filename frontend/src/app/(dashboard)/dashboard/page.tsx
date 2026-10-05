@@ -53,18 +53,19 @@ export default function DashboardPage() {
   const now = new Date();
   const [selectedYear, setSelectedYear] = useState(now.getFullYear());
   const [selectedMonth, setSelectedMonth] = useState(now.getMonth() + 1);
-  const [loading, setLoading] = useState(true);
+  const [loaded, setLoaded] = useState(false);
   const [data, setData] = useState<DashboardData | null>(null);
   const [isPending, startTransition] = useTransition();
+  // Lần tải đầu: hiện loading đến khi có dữ liệu; các lần sau dựa vào isPending của transition.
+  const loading = isPending || !loaded;
 
   const fetchDashboard = (year: number, month: number) => {
-    setLoading(true);
     startTransition(async () => {
       const res = await getJson<DashboardData>(`/api/dashboard?year=${year}&month=${month}`);
       if (res.ok) {
         setData(res.data);
       }
-      setLoading(false);
+      setLoaded(true);
     });
   };
 

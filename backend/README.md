@@ -21,9 +21,9 @@ backend/
 │   ├── pagination.py        Helper phân trang {data,total,page,limit,totalPages}
 │   ├── schemas/              Validate request theo từng module (auth, transaction, ...)
 │   ├── repositories/          Toàn bộ câu SQL, theo bảng (transactions, budgets, ...)
-│   └── routers/               Endpoint HTTP, ứng với từng module nghiệp vụ
+│   ├── routers/               Endpoint HTTP, ứng với từng module nghiệp vụ
+│   └── seed.py                Sinh dữ liệu mẫu >= 2000 bản ghi (python -m app.seed)
 ├── sql/schema.sql          Schema MySQL (dùng chung cho app và Docker)
-├── sql/seed.ts              Script sinh dữ liệu mẫu
 ├── requirements.txt
 └── Dockerfile
 ```

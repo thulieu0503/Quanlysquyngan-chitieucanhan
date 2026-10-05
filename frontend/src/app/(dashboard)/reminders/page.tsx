@@ -48,10 +48,14 @@ const CHANNEL_LABELS: Record<string, string> = {
   both: "Email & Ứng dụng",
 };
 
+function tomorrowISO() {
+  return new Date(Date.now() + 86400000).toISOString().split("T")[0];
+}
+
 export default function RemindersPage() {
   const [reminders, setReminders] = useState<ReminderItem[]>([]);
   const [categories, setCategories] = useState<CategoryItem[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loaded, setLoaded] = useState(false);
 
   // Modals state
   const [modalOpen, setModalOpen] = useState(false);
@@ -59,22 +63,22 @@ export default function RemindersPage() {
   const [deleteConfirmId, setDeleteConfirmId] = useState<number | null>(null);
 
   // Form state
-  const tomorrow = new Date(Date.now() + 86400000).toISOString().split("T")[0];
   const [title, setTitle] = useState("");
   const [categoryId, setCategoryId] = useState("");
   const [amount, setAmount] = useState("");
   const [recurrence, setRecurrence] = useState<"daily" | "weekly" | "monthly" | "yearly">("monthly");
   const [channel, setChannel] = useState<"in_app" | "email" | "both">("in_app");
-  const [nextRunDate, setNextRunDate] = useState(tomorrow);
+  const [nextRunDate, setNextRunDate] = useState(tomorrowISO);
   const [isActive, setIsActive] = useState(true);
 
   const [formError, setFormError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [isPending, startTransition] = useTransition();
+  // Lần tải đầu: hiện loading đến khi có dữ liệu; các lần sau dựa vào isPending của transition.
+  const loading = isPending || !loaded;
 
   const fetchRemindersAndCategories = () => {
-    setLoading(true);
     startTransition(async () => {
       const [rRes, cRes] = await Promise.all([
         getJson<ReminderItem[]>("/api/reminders"),
@@ -84,7 +88,7 @@ export default function RemindersPage() {
       else setReminders([]);
       if (cRes.ok && Array.isArray(cRes.data)) setCategories(cRes.data);
       else setCategories([]);
-      setLoading(false);
+      setLoaded(true);
     });
   };
 
@@ -99,7 +103,7 @@ export default function RemindersPage() {
     setAmount("");
     setRecurrence("monthly");
     setChannel("in_app");
-    setNextRunDate(tomorrow);
+    setNextRunDate(tomorrowISO());
     setIsActive(true);
     setFormError(null);
     setModalOpen(true);

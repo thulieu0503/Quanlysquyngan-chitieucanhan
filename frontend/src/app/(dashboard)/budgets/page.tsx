@@ -40,7 +40,7 @@ function formatVND(amount: string | number) {
 export default function BudgetsPage() {
   const [budgets, setBudgets] = useState<BudgetUsageItem[]>([]);
   const [categories, setCategories] = useState<CategoryItem[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loaded, setLoaded] = useState(false);
 
   // Modals state
   const [modalOpen, setModalOpen] = useState(false);
@@ -60,9 +60,10 @@ export default function BudgetsPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [isPending, startTransition] = useTransition();
+  // Lần tải đầu: hiện loading đến khi có dữ liệu; các lần sau dựa vào isPending của transition.
+  const loading = isPending || !loaded;
 
   const fetchBudgetsAndCategories = () => {
-    setLoading(true);
     startTransition(async () => {
       const [bRes, cRes] = await Promise.all([
         getJson<BudgetUsageItem[]>("/api/budgets"),
@@ -72,7 +73,7 @@ export default function BudgetsPage() {
       else setBudgets([]);
       if (cRes.ok && Array.isArray(cRes.data)) setCategories(cRes.data.filter((c) => c.type === "expense"));
       else setCategories([]);
-      setLoading(false);
+      setLoaded(true);
     });
   };
 
